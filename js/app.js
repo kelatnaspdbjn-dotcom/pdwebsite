@@ -1,3 +1,7 @@
+// ============================================
+// PERISAI DIRI - MAIN APP
+// ============================================
+
 class PerisaiDiriApp {
     constructor() {
         this.currentSection = 'dashboard';
@@ -9,17 +13,15 @@ class PerisaiDiriApp {
         this.init();
     }
 
+    // ============================================
+    // INITIALIZATION
+    // ============================================
     async init() {
-        // Cek session login
+        console.log('🚀 PerisaiDiriApp initializing...');
         this.checkSession();
-        
-        // Setup event listeners
         this.setupEventListeners();
-        
-        // Load data
         await this.loadAllData();
         
-        // Render berdasarkan mode
         if (this.isPublic) {
             this.renderPublic();
         } else {
@@ -38,11 +40,13 @@ class PerisaiDiriApp {
             document.getElementById('mainApp').style.display = 'block';
             document.getElementById('currentUser').textContent = this.currentUser.name || 'Admin';
             document.getElementById('userRole').textContent = this.currentUser.role || 'Administrator';
+            console.log('✅ User logged in:', this.currentUser.name);
         } else {
             this.isPublic = true;
             document.getElementById('publicView').style.display = 'block';
             document.getElementById('loginPage').style.display = 'none';
             document.getElementById('mainApp').style.display = 'none';
+            console.log('👤 Public mode');
         }
     }
 
@@ -79,20 +83,70 @@ class PerisaiDiriApp {
         });
     }
 
+    // ============================================
+    // DATA LOADING
+    // ============================================
     async loadAllData() {
         const sections = ['berita', 'anggota', 'ranting', 'jadwal', 'absensi', 'ukt', 'surat_masuk', 'surat_keluar', 'keuangan', 'catatan'];
+        
+        document.getElementById('dataStatus').innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memuat...';
         
         for (const section of sections) {
             try {
                 this.data[section] = await sheetService.fetchData(section);
+                console.log(`✅ ${section}: ${this.data[section].length} data`);
             } catch (error) {
-                console.error(`Error loading ${section}:`, error);
+                console.error(`❌ Error loading ${section}:`, error);
                 this.data[section] = [];
             }
         }
+        
+        document.getElementById('dataStatus').innerHTML = '<i class="fas fa-check-circle"></i> Terhubung';
     }
 
-    // ========== PUBLIC VIEW ==========
+    // ============================================
+    // NAVIGATION
+    // ============================================
+    navigateTo(section) {
+        document.querySelectorAll('.sidebar .nav-link').forEach(link => {
+            link.classList.remove('active');
+        });
+        const activeLink = document.querySelector(`.sidebar .nav-link[data-section="${section}"]`);
+        if (activeLink) activeLink.classList.add('active');
+
+        document.querySelectorAll('.section-content').forEach(el => {
+            el.classList.remove('active');
+        });
+        const targetSection = document.getElementById(section);
+        if (targetSection) targetSection.classList.add('active');
+
+        this.currentSection = section;
+        this.renderSection(section);
+
+        if (window.innerWidth <= 768) {
+            document.getElementById('sidebar').classList.remove('show');
+        }
+    }
+
+    renderSection(section) {
+        switch(section) {
+            case 'dashboard': this.renderDashboard(); break;
+            case 'berita': this.renderBerita(); break;
+            case 'anggota': this.renderAnggota(); break;
+            case 'ranting': this.renderRanting(); break;
+            case 'jadwal': this.renderJadwal(); break;
+            case 'absensi': this.renderAbsensi(); break;
+            case 'ukt': this.renderUKT(); break;
+            case 'surat': this.renderSurat(); break;
+            case 'keuangan': this.renderKeuangan(); break;
+            case 'catatan': this.renderCatatan(); break;
+            default: console.warn('⚠️ Section not found:', section);
+        }
+    }
+
+    // ============================================
+    // PUBLIC VIEW
+    // ============================================
     renderPublic() {
         this.renderPublicBerita();
         this.renderPublicJadwal();
@@ -118,7 +172,7 @@ class PerisaiDiriApp {
             <div class="col-md-6 col-lg-4 mb-4">
                 <div class="public-card">
                     ${item.foto ? `<img src="${item.foto}" class="card-img-top" alt="${item.judul}">` : 
-                    `<div class="card-img-top bg-light d-flex align-items-center justify-content-center">
+                    `<div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height:200px;">
                         <i class="fas fa-image fa-3x text-muted" style="opacity:0.3;"></i>
                     </div>`}
                     <div class="card-body">
@@ -266,43 +320,9 @@ class PerisaiDiriApp {
         }).join('');
     }
 
-    // ========== PRIVATE VIEW ==========
-    navigateTo(section) {
-        document.querySelectorAll('.sidebar .nav-link').forEach(link => {
-            link.classList.remove('active');
-        });
-        const activeLink = document.querySelector(`.sidebar .nav-link[data-section="${section}"]`);
-        if (activeLink) activeLink.classList.add('active');
-
-        document.querySelectorAll('.section-content').forEach(el => {
-            el.classList.remove('active');
-        });
-        const targetSection = document.getElementById(section);
-        if (targetSection) targetSection.classList.add('active');
-
-        this.currentSection = section;
-        this.renderSection(section);
-
-        if (window.innerWidth <= 768) {
-            document.getElementById('sidebar').classList.remove('show');
-        }
-    }
-
-    renderSection(section) {
-        switch(section) {
-            case 'dashboard': this.renderDashboard(); break;
-            case 'berita': this.renderBerita(); break;
-            case 'anggota': this.renderAnggota(); break;
-            case 'ranting': this.renderRanting(); break;
-            case 'jadwal': this.renderJadwal(); break;
-            case 'absensi': this.renderAbsensi(); break;
-            case 'ukt': this.renderUKT(); break;
-            case 'surat': this.renderSurat(); break;
-            case 'keuangan': this.renderKeuangan(); break;
-            case 'catatan': this.renderCatatan(); break;
-        }
-    }
-
+    // ============================================
+    // DASHBOARD
+    // ============================================
     renderDashboard() {
         const anggota = this.data.anggota || [];
         const berita = (this.data.berita || []).filter(b => b.status === 'published');
@@ -424,7 +444,123 @@ class PerisaiDiriApp {
         });
     }
 
-    // ========== RENDER RANTING ==========
+    // ============================================
+    // BERITA
+    // ============================================
+    renderBerita() {
+        const container = document.getElementById('beritaList');
+        const data = this.data.berita || [];
+        const filter = document.getElementById('filterStatus')?.value || 'all';
+        
+        let filteredData = data;
+        if (filter !== 'all') {
+            filteredData = data.filter(item => item.status === filter);
+        }
+
+        if (filteredData.length === 0) {
+            container.innerHTML = `
+                <div class="col-12">
+                    <div class="text-center text-muted py-5">
+                        <i class="fas fa-newspaper fa-3x mb-3" style="opacity:0.3;"></i>
+                        <p>Belum ada berita</p>
+                    </div>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = filteredData.map(item => `
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="berita-card">
+                    <div class="berita-image">
+                        ${item.foto ? `<img src="${item.foto}" alt="${item.judul}">` : 
+                        `<div class="d-flex align-items-center justify-content-center h-100 bg-light">
+                            <i class="fas fa-image fa-3x text-muted" style="opacity:0.3;"></i>
+                        </div>`}
+                        <span class="status-badge ${item.status === 'published' ? 'bg-success' : 'bg-warning'} text-white">
+                            ${item.status === 'published' ? 'Published' : 'Draft'}
+                        </span>
+                    </div>
+                    <div class="berita-body">
+                        <h5 class="card-title">${item.judul || 'Tanpa Judul'}</h5>
+                        <p class="text-muted small">
+                            <i class="far fa-calendar-alt"></i> ${item.tanggal || ''}
+                            ${item.penulis ? ` • <i class="far fa-user"></i> ${item.penulis}` : ''}
+                        </p>
+                        ${item.tag ? `<div>${item.tag.split(',').map(t => `<span class="berita-tag">#${t.trim()}</span>`).join('')}</div>` : ''}
+                        <p class="card-text mt-2">${(item.konten || '').replace(/<[^>]*>/g, '').substring(0, 120)}...</p>
+                    </div>
+                    <div class="berita-footer">
+                        <div>
+                            <button class="btn btn-sm btn-info" onclick="app.editData('berita', '${item.id}')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="app.deleteData('berita', '${item.id}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                        <button class="btn btn-sm btn-outline-secondary" onclick="app.viewDetail('berita', '${item.id}')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    filterBerita() {
+        this.renderBerita();
+    }
+
+    // ============================================
+    // ANGGOTA
+    // ============================================
+    renderAnggota() {
+        const tbody = document.getElementById('anggotaBody');
+        const data = this.data.anggota || [];
+        
+        tbody.innerHTML = data.map((item, index) => `
+            <tr>
+                <td>${index + 1}</td>
+                <td>
+                    <img src="${item.foto || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(item.nama || '') + '&background=c0392b&color=fff&size=40'}" 
+                         class="rounded-circle" width="40" height="40" alt="${item.nama}">
+                </td>
+                <td><strong>${item.nama || ''}</strong></td>
+                <td>${item.email || ''}</td>
+                <td>${item.telepon || ''}</td>
+                <td>${item.ranting || '-'}</td>
+                <td>${item.cabang || '-'}</td>
+                <td>
+                    <span class="badge ${item.status === 'Aktif' ? 'bg-success' : 'bg-secondary'}">
+                        ${item.status || 'Tidak Aktif'}
+                    </span>
+                </td>
+                <td>
+                    <button class="btn btn-sm btn-info" onclick="app.editData('anggota', '${item.id}')">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger" onclick="app.deleteData('anggota', '${item.id}')">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-secondary" onclick="app.viewDetail('anggota', '${item.id}')">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </td>
+            </tr>
+        `).join('') || `
+            <tr>
+                <td colspan="9" class="text-center text-muted py-4">
+                    <i class="fas fa-users fa-2x mb-2" style="opacity:0.3;"></i>
+                    <p>Belum ada anggota</p>
+                </td>
+            </tr>
+        `;
+    }
+
+    // ============================================
+    // RANTING
+    // ============================================
     renderRanting() {
         const container = document.getElementById('rantingContent');
         const data = this.data.ranting || [];
@@ -477,19 +613,63 @@ class PerisaiDiriApp {
         }).join('');
     }
 
-    // ========== RENDER ABSENSI ==========
+    // ============================================
+    // JADWAL
+    // ============================================
+    renderJadwal() {
+        const container = document.getElementById('jadwalContent');
+        const data = this.data.jadwal || [];
+        
+        container.innerHTML = data.map(item => `
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <h5 class="card-title">
+                                <i class="fas fa-calendar-day text-primary"></i> ${item.hari || ''}
+                            </h5>
+                            <span class="badge bg-primary">${item.waktu || ''}</span>
+                        </div>
+                        <div class="mt-3">
+                            <p><i class="fas fa-map-marker-alt text-danger"></i> ${item.tempat || 'Tempat belum ditentukan'}</p>
+                            ${item.alamat ? `<p class="text-muted small"><i class="fas fa-location-dot"></i> ${item.alamat}</p>` : ''}
+                            ${item.cabang ? `<p class="text-muted small"><i class="fas fa-sitemap"></i> Cabang: ${item.cabang}</p>` : ''}
+                            ${item.kapasitas ? `<p class="text-muted small"><i class="fas fa-users"></i> Kapasitas: ${item.kapasitas} orang</p>` : ''}
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <button class="btn btn-sm btn-info" onclick="app.editData('jadwal', '${item.id}')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-danger" onclick="app.deleteData('jadwal', '${item.id}')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `).join('') || `
+            <div class="col-12">
+                <div class="text-center text-muted py-5">
+                    <i class="fas fa-calendar fa-3x mb-3" style="opacity:0.3;"></i>
+                    <p>Belum ada jadwal latihan</p>
+                </div>
+            </div>
+        `;
+    }
+
+    // ============================================
+    // ABSENSI
+    // ============================================
     renderAbsensi() {
         const container = document.getElementById('absensiContent');
         let data = this.data.absensi || [];
         const anggota = this.data.anggota || [];
         const ranting = this.data.ranting || [];
 
-        // Filter
         const filterRanting = document.getElementById('filterRanting')?.value || 'all';
         const filterTanggal = document.getElementById('filterTanggal')?.value || '';
         const filterStatus = document.getElementById('filterStatusAbsensi')?.value || 'all';
 
-        // Populate filter ranting
         const rantingSelect = document.getElementById('filterRanting');
         if (rantingSelect) {
             const currentValue = rantingSelect.value;
@@ -498,7 +678,6 @@ class PerisaiDiriApp {
             rantingSelect.value = currentValue;
         }
 
-        // Apply filters
         data = data.filter(item => {
             const anggotaData = anggota.find(a => a.id == item.anggota_id);
             const rantingNama = anggotaData?.ranting || 'Tanpa Ranting';
@@ -519,7 +698,7 @@ class PerisaiDiriApp {
             return;
         }
 
-        container.innerHTML = data.map((item, index) => {
+        container.innerHTML = data.map((item) => {
             const anggotaData = anggota.find(a => a.id == item.anggota_id);
             return `
                 <div class="absensi-card">
@@ -573,7 +752,215 @@ class PerisaiDiriApp {
         this.renderAbsensi();
     }
 
-    // ========== RENDER CATATAN ==========
+    // ============================================
+    // UKT
+    // ============================================
+    renderUKT() {
+        const container = document.getElementById('uktContent');
+        const data = this.data.ukt || [];
+        const anggota = this.data.anggota || [];
+        
+        if (data.length === 0) {
+            container.innerHTML = `
+                <div class="text-center text-muted py-5">
+                    <i class="fas fa-money-bill-wave fa-3x mb-3" style="opacity:0.3;"></i>
+                    <p>Belum ada data UKT</p>
+                </div>
+            `;
+            return;
+        }
+
+        let total = 0;
+        let table = `
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Anggota</th>
+                            <th>Ranting</th>
+                            <th>Nominal</th>
+                            <th>Tanggal Bayar</th>
+                            <th>Status</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        `;
+
+        data.forEach((item, index) => {
+            const nominal = parseFloat(item.nominal) || 0;
+            total += nominal;
+            const anggotaData = anggota.find(a => a.id == item.anggota_id);
+            table += `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${anggotaData?.nama || item.anggota_nama || 'Tidak Diketahui'}</td>
+                    <td>${anggotaData?.ranting || '-'}</td>
+                    <td>Rp ${this.formatNumber(nominal)}</td>
+                    <td>${item.tanggal_bayar || ''}</td>
+                    <td>
+                        <span class="badge ${item.status === 'Lunas' ? 'bg-success' : 'bg-warning'}">
+                            ${item.status || 'Belum Lunas'}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-info" onclick="app.editData('ukt', '${item.id}')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-danger" onclick="app.deleteData('ukt', '${item.id}')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+        });
+
+        table += `
+            <tr class="table-primary fw-bold">
+                <td colspan="3" class="text-end">Total:</td>
+                <td colspan="4">Rp ${this.formatNumber(total)}</td>
+            </tr>
+        `;
+        table += `</tbody></table></div>`;
+        container.innerHTML = table;
+    }
+
+    // ============================================
+    // SURAT
+    // ============================================
+    renderSurat() {
+        const masukContainer = document.getElementById('suratMasukContent');
+        const masukData = this.data.surat_masuk || [];
+        this.renderSuratTable(masukContainer, masukData, 'Masuk');
+
+        const keluarContainer = document.getElementById('suratKeluarContent');
+        const keluarData = this.data.surat_keluar || [];
+        this.renderSuratTable(keluarContainer, keluarData, 'Keluar');
+    }
+
+    renderSuratTable(container, data, type) {
+        if (data.length === 0) {
+            container.innerHTML = `
+                <div class="text-center text-muted py-4">
+                    <i class="fas fa-envelope fa-2x mb-2" style="opacity:0.3;"></i>
+                    <p>Tidak ada surat ${type.toLowerCase()}</p>
+                </div>
+            `;
+            return;
+        }
+
+        let table = `
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Nomor</th>
+                            <th>Tanggal</th>
+                            <th>Perihal</th>
+                            <th>${type === 'Masuk' ? 'Asal' : 'Tujuan'}</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        `;
+
+        data.forEach((item, index) => {
+            table += `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${item.nomor || '-'}</td>
+                    <td>${item.tanggal || ''}</td>
+                    <td>${item.perihal || ''}</td>
+                    <td>${type === 'Masuk' ? (item.asal || '-') : (item.tujuan || '-')}</td>
+                    <td>
+                        <button class="btn btn-sm btn-info" onclick="app.editData('surat_${type.toLowerCase()}', '${item.id}')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-danger" onclick="app.deleteData('surat_${type.toLowerCase()}', '${item.id}')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+        });
+
+        table += `</tbody></table></div>`;
+        container.innerHTML = table;
+    }
+
+    // ============================================
+    // KEUANGAN
+    // ============================================
+    renderKeuangan() {
+        const container = document.getElementById('keuanganContent');
+        const data = this.data.keuangan || [];
+        
+        if (data.length === 0) {
+            container.innerHTML = `
+                <div class="text-center text-muted py-5">
+                    <i class="fas fa-chart-pie fa-3x mb-3" style="opacity:0.3;"></i>
+                    <p>Belum ada data keuangan</p>
+                </div>
+            `;
+            return;
+        }
+
+        let total = 0;
+        let table = `
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Tanggal</th>
+                            <th>Keterangan</th>
+                            <th>Kategori</th>
+                            <th>Nominal</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        `;
+
+        data.forEach((item, index) => {
+            const nominal = parseFloat(item.nominal) || 0;
+            total += nominal;
+            table += `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${item.tanggal || ''}</td>
+                    <td>${item.keterangan || ''}</td>
+                    <td><span class="badge bg-secondary">${item.kategori || 'Lainnya'}</span></td>
+                    <td class="${nominal < 0 ? 'text-danger' : 'text-success'}">
+                        ${nominal < 0 ? '-' : ''}Rp ${this.formatNumber(Math.abs(nominal))}
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-info" onclick="app.editData('keuangan', '${item.id}')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-danger" onclick="app.deleteData('keuangan', '${item.id}')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+        });
+
+        table += `
+            <tr class="table-primary fw-bold">
+                <td colspan="4" class="text-end">Total:</td>
+                <td colspan="2">Rp ${this.formatNumber(total)}</td>
+            </tr>
+        `;
+        table += `</tbody></table></div>`;
+        container.innerHTML = table;
+    }
+
+    // ============================================
+    // CATATAN
+    // ============================================
     renderCatatan() {
         const container = document.getElementById('catatanContent');
         const data = this.data.catatan || [];
@@ -589,7 +976,7 @@ class PerisaiDiriApp {
             return;
         }
 
-        container.innerHTML = data.map((item, index) => {
+        container.innerHTML = data.map((item) => {
             const pelatih = anggota.find(a => a.id == item.pelatih_id);
             return `
                 <div class="card mb-3">
@@ -635,7 +1022,9 @@ class PerisaiDiriApp {
         }).join('');
     }
 
-    // ========== FORM GENERATION ==========
+    // ============================================
+    // FORM HANDLING
+    // ============================================
     showForm(section) {
         if (!this.currentUser) {
             Swal.fire('Silakan login terlebih dahulu', '', 'warning');
@@ -1086,7 +1475,9 @@ class PerisaiDiriApp {
         `;
     }
 
-    // ========== HELPER METHODS ==========
+    // ============================================
+    // HELPER FUNCTIONS
+    // ============================================
     getRantingOptions() {
         const ranting = this.data.ranting || [];
         return ranting.map(r => 
@@ -1274,6 +1665,50 @@ class PerisaiDiriApp {
         }
     }
 
+    viewDetail(section, id) {
+        const data = this.data[section] || [];
+        const item = data.find(d => d.id == id);
+        
+        if (!item) {
+            Swal.fire('Error', 'Data tidak ditemukan', 'error');
+            return;
+        }
+
+        const modal = new bootstrap.Modal(document.getElementById('detailModal'));
+        const body = document.getElementById('detailModalBody');
+        
+        let html = '';
+        if (section === 'berita') {
+            html = `
+                ${item.foto ? `<img src="${item.foto}" class="img-fluid rounded mb-3" alt="${item.judul}">` : ''}
+                <h3>${item.judul}</h3>
+                <div class="text-muted small mb-3">
+                    <i class="far fa-calendar-alt"></i> ${item.tanggal || ''}
+                    ${item.penulis ? ` • <i class="far fa-user"></i> ${item.penulis}` : ''}
+                    ${item.tag ? ` • <i class="fas fa-tags"></i> ${item.tag}` : ''}
+                    <span class="badge ${item.status === 'published' ? 'bg-success' : 'bg-warning'} ms-2">${item.status}</span>
+                </div>
+                <div>${item.konten || ''}</div>
+            `;
+        } else {
+            html = `
+                <div class="table-responsive">
+                    <table class="table table-borderless">
+                        ${Object.entries(item).map(([key, value]) => `
+                            <tr>
+                                <th style="width:30%">${this.capitalize(key.replace(/_/g, ' '))}</th>
+                                <td>${value || '-'}</td>
+                            </tr>
+                        `).join('')}
+                    </table>
+                </div>
+            `;
+        }
+        
+        body.innerHTML = html;
+        modal.show();
+    }
+
     formatNumber(num) {
         return new Intl.NumberFormat('id-ID').format(num);
     }
@@ -1283,7 +1718,9 @@ class PerisaiDiriApp {
     }
 }
 
-// ========== GLOBAL FUNCTIONS ==========
+// ============================================
+// GLOBAL FUNCTIONS
+// ============================================
 function showLogin() {
     document.getElementById('publicView').style.display = 'none';
     document.getElementById('loginPage').style.display = 'flex';
@@ -1304,7 +1741,6 @@ function handleLogin(e) {
     const username = document.getElementById('loginUsername').value;
     const password = document.getElementById('loginPassword').value;
     
-    // Username: admin, Password: admin123
     if (username === 'admin' && password === 'admin123') {
         localStorage.setItem('perisaiDiriUser', JSON.stringify({
             name: 'Administrator',
@@ -1370,7 +1806,9 @@ function logout() {
     });
 }
 
-// ========== INITIALIZE ==========
+// ============================================
+// INITIALIZE
+// ============================================
 document.addEventListener('DOMContentLoaded', () => {
     window.app = new PerisaiDiriApp();
 });

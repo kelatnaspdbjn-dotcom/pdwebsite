@@ -33,24 +33,30 @@ class GoogleSheetsService {
         }
     }
 
-    // ===== SAVE DATA (CREATE, UPDATE, DELETE) =====
+    // ===== SAVE DATA (CREATE, UPDATE, DELETE) - PAKAI GET =====
     async saveData(sheetName, data) {
         try {
             console.log(`📤 Saving to ${sheetName}:`, data);
             
-            const payload = {
-                sheet: sheetName,
-                data: data,
-                id: data.id || null,
-                _delete: data._delete || false
-            };
+            // Bangun URL dengan parameter
+            let url = `${this.baseURL}?action=save`;
+            url += `&sheet=${encodeURIComponent(sheetName)}`;
+            url += `&data=${encodeURIComponent(JSON.stringify(data))}`;
             
-            const response = await fetch(this.baseURL, {
-                method: 'POST',
+            if (data.id) {
+                url += `&id=${encodeURIComponent(data.id)}`;
+            }
+            if (data._delete) {
+                url += `&_delete=true`;
+            }
+            
+            console.log('📤 Sending GET request:', url);
+            
+            const response = await fetch(url, {
+                method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(payload)
+                }
             });
             
             if (!response.ok) {
@@ -66,7 +72,6 @@ class GoogleSheetsService {
                 throw new Error(result.error);
             }
             
-            // Clear cache setelah save
             this.cache.delete(sheetName);
             return result;
             

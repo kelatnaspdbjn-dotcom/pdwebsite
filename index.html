@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Silat Perisai Diri - Sistem Informasi</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+    <!-- ==================== PUBLIC VIEW ==================== -->
+    <div id="publicView">
+        <!-- Navbar Publik -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+            <div class="container">
+                <a class="navbar-brand" href="#">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%23c0392b'/%3E%3Cpath d='M50 15 L85 85 L15 85 Z' fill='%23f1c40f'/%3E%3Ctext x='50' y='65' text-anchor='middle' fill='%23fff' font-size='20' font-weight='bold'%3EPD%3C/text%3E%3C/svg%3E" alt="Logo" width="40" class="me-2">
+                    Perisai Diri
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#publicNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="publicNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item"><a class="nav-link" href="#publicBerita">Berita</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#publicJadwal">Jadwal</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#publicTempat">Tempat Latihan</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#publicRanting">Ranting & Cabang</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#publicTentang">Tentang</a></li>
+                        <li class="nav-item">
+                            <button class="btn btn-outline-light btn-sm ms-2" onclick="showLogin()">
+                                <i class="fas fa-sign-in-alt"></i> Login
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Hero Section -->
+        <section class="public-hero">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-6">
+                        <h1 class="display-3 fw-bold">Silat <span class="text-gold">Perisai Diri</span></h1>
+                        <p class="lead">Perguruan silat yang mengajarkan seni bela diri dengan filosofi perlindungan diri dan pengembangan karakter.</p>
+                        <div class="d-flex gap-3 mt-4">
+                            <a href="#publicBerita" class="btn btn-primary btn-lg">Lihat Berita</a>
+                            <a href="#publicJadwal" class="btn btn-outline-light btn-lg">Jadwal Latihan</a>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 500 400'%3E%3Crect width='500' height='400' fill='%231a1a2e'/%3E%3Ccircle cx='250' cy='200' r='150' fill='none' stroke='%23f1c40f' stroke-width='3'/%3E%3Ccircle cx='250' cy='200' r='100' fill='none' stroke='%23c0392b' stroke-width='2'/%3E%3Ctext x='250' y='210' text-anchor='middle' fill='%23f1c40f' font-size='60' font-weight='bold'%3EPD%3C/text%3E%3C/svg%3E" alt="Perisai Diri" class="img-fluid">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Public: Berita -->
+        <section id="publicBerita" class="public-section">
+            <div class="container">
+                <h2 class="section-title">Berita Terbaru</h2>
+                <div class="row" id="publicBeritaList"></div>
+            </div>
+        </section>
+
+        <!-- Public: Jadwal -->
+        <section id="publicJadwal" class="public-section bg-light">
+            <div class="container">
+                <h2 class="section-title">Jadwal Latihan</h2>
+                <div class="row" id="publicJadwalList"></div>
+            </div>
+        </section>
+
+        <!-- Public: Tempat Latihan -->
+        <section id="publicTempat" class="public-section">
+            <div class="container">
+                <h2 class="section-title">Tempat Latihan</h2>
+                <div class="row" id="publicTempatList"></div>
+            </div>
+        </section>
+
+        <!-- Public: Ranting & Cabang -->
+        <section id="publicRanting" class="public-section bg-light">
+            <div class="container">
+                <h2 class="section-title">Ranting & Cabang</h2>
+                <div class="row" id="publicRantingList"></div>
+            </div>
+        </section>
+
+        <!-- Public: Tentang -->
+        <section id="publicTentang" class="public-section">
+            <div class="container">
+                <h2 class="section-title">Tentang Perisai Diri</h2>
+                <div class="row">
+                    <div class="col-lg-8 mx-auto text-center">
+                        <p class="lead">Perisai Diri adalah perguruan silat yang didirikan dengan tujuan melestarikan budaya bangsa melalui seni bela diri.</p>
+                        <p>Kami mengajarkan tidak hanya teknik fisik, tetapi juga nilai-nilai luhur, kedisiplinan, dan pengembangan karakter.</p>
+                        <div class="row mt-5">
+                            <div class="col-md-4">
+                                <div class="feature-box">
+                                    <i class="fas fa-shield-alt fa-3x text-primary"></i>
+                                    <h5>Perlindungan Diri</h5>
+                                    <p>Teknik bela diri efektif untuk melindungi diri</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="feature-box">
+                                    <i class="fas fa-users fa-3x text-success"></i>
+                                    <h5>Komunitas</h5>
+                                    <p>Jaringan persaudaraan yang kuat</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="feature-box">
+                                    <i class="fas fa-star fa-3x text-warning"></i>
+                                    <h5>Prestasi</h5>
+                                    <p>Menghasilkan atlet berprestasi</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="public-footer">
+            <div class="container text-center">
+                <p>&copy; 2026 Perisai Diri. All rights reserved.</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- ==================== LOGIN PAGE ==================== -->
+    <div id="loginPage" style="display:none;">
+        <div class="login-page">
+            <div class="login-container">
+                <div class="login-box">
+                    <div class="login-logo">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%23c0392b'/%3E%3Cpath d='M50 15 L85 85 L15 85 Z' fill='%23f1c40f'/%3E%3Ctext x='50' y='65' text-anchor='middle' fill='%23fff' font-size='20' font-weight='bold'%3EPD%3C/text%3E%3C/svg%3E" alt="Logo" width="80">
+                        <h2>Perisai Diri</h2>
+                        <p>Sistem Informasi Manajemen</p>
+                    </div>
+                    <form id="loginForm" onsubmit="return handleLogin(event)">
+                        <div class="form-group">
+                            <input type="text" id="loginUsername" class="form-control" placeholder="Username" required>
+                            <i class="fas fa-user input-icon"></i>
+                        </div>
+                        <div class="form-group">
+                            <input type="password" id="loginPassword" class="form-control" placeholder="Password" required>
+                            <i class="fas fa-lock input-icon"></i>
+                        </div>
+                        <button type="submit" class="btn-login">
+                            <i class="fas fa-sign-in-alt"></i> Masuk
+                        </button>
+                    </form>
+                    <div class="login-footer">
+                        <button class="btn btn-link text-white-50" onclick="showPublic()">
+                            <i class="fas fa-arrow-left"></i> Kembali ke Publik
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== PRIVATE APP ==================== -->
+    <div id="mainApp" style="display:none;">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-brand">
+                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%23c0392b'/%3E%3Cpath d='M50 15 L85 85 L15 85 Z' fill='%23f1c40f'/%3E%3Ctext x='50' y='65' text-anchor='middle' fill='%23fff' font-size='20' font-weight='bold'%3EPD%3C/text%3E%3C/svg%3E" alt="Logo" width="50">
+                <span>Perisai Diri</span>
+            </div>
+            <div class="user-info">
+                <img src="https://ui-avatars.com/api/?name=Admin&background=c0392b&color=fff&size=40" alt="User">
+                <div>
+                    <span id="currentUser">Admin</span>
+                    <small id="userRole">Administrator</small>
+                </div>
+                <button class="btn-logout" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+            <nav class="nav flex-column">
+                <a href="#dashboard" class="nav-link active" data-section="dashboard">
+                    <i class="fas fa-home"></i> Dashboard
+                </a>
+                <a href="#berita" class="nav-link" data-section="berita">
+                    <i class="fas fa-newspaper"></i> Berita
+                </a>
+                <a href="#anggota" class="nav-link" data-section="anggota">
+                    <i class="fas fa-users"></i> Anggota
+                </a>
+                <a href="#ranting" class="nav-link" data-section="ranting">
+                    <i class="fas fa-sitemap"></i> Ranting & Cabang
+                </a>
+                <a href="#jadwal" class="nav-link" data-section="jadwal">
+                    <i class="fas fa-calendar-alt"></i> Jadwal & Tempat
+                </a>
+                <a href="#absensi" class="nav-link" data-section="absensi">
+                    <i class="fas fa-clipboard-check"></i> Absensi
+                </a>
+                <a href="#ukt" class="nav-link" data-section="ukt">
+                    <i class="fas fa-money-bill-wave"></i> UKT
+                </a>
+                <a href="#surat" class="nav-link" data-section="surat">
+                    <i class="fas fa-envelope"></i> Surat
+                </a>
+                <a href="#keuangan" class="nav-link" data-section="keuangan">
+                    <i class="fas fa-chart-pie"></i> Keuangan
+                </a>
+                <a href="#catatan" class="nav-link" data-section="catatan">
+                    <i class="fas fa-book"></i> Catatan Latihan
+                </a>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content" id="mainContent">
+            <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+                <div class="container-fluid">
+                    <button class="btn btn-outline-secondary" id="sidebarToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <span class="navbar-brand ms-3">Sistem Informasi Perisai Diri</span>
+                    <div class="ms-auto d-flex align-items-center gap-3">
+                        <span class="badge bg-success" id="dataStatus">
+                            <i class="fas fa-check-circle"></i> Terhubung
+                        </span>
+                        <span class="badge bg-primary" id="lastUpdate"></span>
+                        <button class="btn btn-outline-secondary btn-sm" onclick="showPublic()">
+                            <i class="fas fa-globe"></i> Publik
+                        </button>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="content-wrapper">
+                <!-- Dashboard -->
+                <div id="dashboard" class="section-content active">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="stat-card">
+                                <i class="fas fa-users text-primary"></i>
+                                <h3 id="totalAnggota">0</h3>
+                                <p>Total Anggota</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card">
+                                <i class="fas fa-calendar-check text-success"></i>
+                                <h3 id="totalHadir">0</h3>
+                                <p>Kehadiran Hari Ini</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card">
+                                <i class="fas fa-money-bill text-warning"></i>
+                                <h3 id="totalUKT">Rp 0</h3>
+                                <p>Total UKT</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card">
+                                <i class="fas fa-newspaper text-info"></i>
+                                <h3 id="totalBerita">0</h3>
+                                <p>Total Berita</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">Statistik Kehadiran per Ranting</div>
+                                <div class="card-body">
+                                    <canvas id="chartKehadiranRanting" height="200"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">Keuangan</div>
+                                <div class="card-body">
+                                    <canvas id="chartKeuangan" height="200"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Berita -->
+                <div id="berita" class="section-content">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2>Manajemen Berita</h2>
+                        <button class="btn btn-primary" onclick="showForm('berita')">
+                            <i class="fas fa-plus"></i> Berita Baru
+                        </button>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3 mb-4">
+                            <div class="filter-card">
+                                <label class="form-label">Filter Status</label>
+                                <select class="form-select" id="filterStatus" onchange="app.filterBerita()">
+                                    <option value="all">Semua</option>
+                                    <option value="published">Published</option>
+                                    <option value="draft">Draft</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-9">
+                            <div id="beritaList" class="row"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Anggota -->
+                <div id="anggota" class="section-content">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2>Data Anggota</h2>
+                        <button class="btn btn-primary" onclick="showForm('anggota')">
+                            <i class="fas fa-user-plus"></i> Tambah Anggota
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover" id="anggotaTable">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Foto</th>
+                                    <th>Nama</th>
+                                    <th>Email</th>
+                                    <th>Telepon</th>
+                                    <th>Ranting</th>
+                                    <th>Cabang</th>
+                                    <th>Status</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="anggotaBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Ranting & Cabang -->
+                <div id="ranting" class="section-content">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2>Manajemen Ranting & Cabang</h2>
+                        <button class="btn btn-primary" onclick="showForm('ranting')">
+                            <i class="fas fa-plus"></i> Tambah Ranting
+                        </button>
+                    </div>
+                    <div id="rantingContent"></div>
+                </div>
+
+                <!-- Jadwal & Tempat -->
+                <div id="jadwal" class="section-content">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2>Jadwal & Tempat Latihan</h2>
+                        <button class="btn btn-primary" onclick="showForm('jadwal')">
+                            <i class="fas fa-plus"></i> Tambah Jadwal
+                        </button>
+                    </div>
+                    <div id="jadwalContent" class="row"></div>
+                </div>
+
+                <!-- Absensi -->
+                <div id="absensi" class="section-content">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2>Absensi Latihan</h2>
+                        <button class="btn btn-primary" onclick="showForm('absensi')">
+                            <i class="fas fa-plus"></i> Tambah Absensi
+                        </button>
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <div class="filter-card">
+                                <label class="form-label">Filter Ranting</label>
+                                <select class="form-select" id="filterRanting" onchange="app.filterAbsensi()">
+                                    <option value="all">Semua Ranting</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="filter-card">
+                                <label class="form-label">Filter Tanggal</label>
+                                <input type="date" class="form-control" id="filterTanggal" onchange="app.filterAbsensi()">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="filter-card">
+                                <label class="form-label">Filter Status</label>
+                                <select class="form-select" id="filterStatusAbsensi" onchange="app.filterAbsensi()">
+                                    <option value="all">Semua</option>
+                                    <option value="Hadir">Hadir</option>
+                                    <option value="Tidak Hadir">Tidak Hadir</option>
+                                    <option value="Izin">Izin</option>
+                                    <option value="Sakit">Sakit</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="absensiContent"></div>
+                </div>
+
+                <!-- UKT -->
+                <div id="ukt" class="section-content">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2>UKT</h2>
+                        <button class="btn btn-primary" onclick="showForm('ukt')">
+                            <i class="fas fa-plus"></i> Tambah UKT
+                        </button>
+                    </div>
+                    <div id="uktContent"></div>
+                </div>
+
+                <!-- Surat -->
+                <div id="surat" class="section-content">
+                    <h2>Surat Masuk & Keluar</h2>
+                    <ul class="nav nav-tabs mb-4" id="suratTabs">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-bs-toggle="tab" href="#suratMasuk">Surat Masuk</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#suratKeluar">Surat Keluar</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="suratMasuk">
+                            <div id="suratMasukContent"></div>
+                        </div>
+                        <div class="tab-pane" id="suratKeluar">
+                            <div id="suratKeluarContent"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Keuangan -->
+                <div id="keuangan" class="section-content">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2>Keuangan</h2>
+                        <button class="btn btn-primary" onclick="showForm('keuangan')">
+                            <i class="fas fa-plus"></i> Tambah Transaksi
+                        </button>
+                    </div>
+                    <div id="keuanganContent"></div>
+                </div>
+
+                <!-- Catatan Latihan -->
+                <div id="catatan" class="section-content">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2>Catatan Latihan</h2>
+                        <button class="btn btn-primary" onclick="showForm('catatan')">
+                            <i class="fas fa-plus"></i> Tambah Catatan
+                        </button>
+                    </div>
+                    <div id="catatanContent"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Form -->
+    <div class="modal fade" id="formModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="formModalTitle">Form</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="formModalBody"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Detail -->
+    <div class="modal fade" id="detailModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Detail</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="detailModalBody"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
+    <script src="js/config.js"></script>
+    <script src="js/google-sheets.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

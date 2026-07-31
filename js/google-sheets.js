@@ -4,7 +4,7 @@ class GoogleSheetsService {
         this.baseURL = CONFIG.GOOGLE_SCRIPT_URL;
     }
 
-    // Fetch data dari AppScript
+    // ===== FETCH DATA =====
     async fetchData(sheetName) {
         if (this.cache.has(sheetName)) {
             return this.cache.get(sheetName);
@@ -12,58 +12,66 @@ class GoogleSheetsService {
 
         try {
             const url = `${this.baseURL}?sheet=${sheetName}`;
-            const response = await fetch(url);
+            console.log(`📥 Fetching: ${url}`);
             
+            const response = await fetch(url);
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                throw new Error(`HTTP ${response.status}`);
             }
             
             const data = await response.json();
-            
-            // Jika ada error dari AppScript
-            if (data.error) {
+            if (data && data.error) {
                 throw new Error(data.error);
             }
             
-            this.cache.set(sheetName, data);
-            return data;
+            this.cache.set(sheetName, data || []);
+            return data || [];
             
         } catch (error) {
-            console.error('Error fetching data:', error);
+            console.error(`❌ Error fetching ${sheetName}:`, error);
             return [];
         }
     }
 
-    // Save data ke AppScript
+    // ===== SAVE DATA (CREATE, UPDATE, DELETE) =====
     async saveData(sheetName, data) {
         try {
+            console.log(`📤 Saving to ${sheetName}:`, data);
+            
+            const payload = {
+                sheet: sheetName,
+                data: data,
+                id: data.id || null,
+                _delete: data._delete || false
+            };
+            
             const response = await fetch(this.baseURL, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                    sheet: sheetName,
-                    data: data,
-                    id: data.id,
-                    _delete: data._delete || false
-                })
+                body: JSON.stringify(payload)
             });
             
             if (!response.ok) {
-                throw new Error('Failed to save data');
+                const errorText = await response.text();
+                console.error('Response error:', errorText);
+                throw new Error(`HTTP ${response.status}: ${errorText}`);
             }
             
             const result = await response.json();
-            if (result.error) {
+            console.log('✅ Save result:', result);
+            
+            if (result && result.error) {
                 throw new Error(result.error);
             }
             
+            // Clear cache setelah save
             this.cache.delete(sheetName);
             return result;
             
         } catch (error) {
-            console.error('Error saving data:', error);
+            console.error(`❌ Error saving to ${sheetName}:`, error);
             throw error;
         }
     }

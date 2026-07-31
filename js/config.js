@@ -4,7 +4,7 @@ const CONFIG = {
     // API_KEY: '...',
     
     // Ganti dengan URL Apps Script Anda
-    GOOGLE_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbwRM3jUd01ZMKH9Neh9LFwaNB8apa5mRVzU0xnSi6BTibAuXGd50eM2-cbX2cIgljzaBA/exec',
+    GOOGLE_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbwxL6LqmK9vLCGi3WDcQE2N054ZlREOhqS7jMPPzRjSbedqP7Wg4EBBkBTvZJAVxmhP_Q/exec',
     
     SHEETS: {
         BERITA: 'berita',
